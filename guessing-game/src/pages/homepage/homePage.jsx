@@ -22,7 +22,7 @@ const HomePage = () => {
         alert("Please enter a username");
         return;
       }
-      const response = await fetch("http://192.168.131.23:3000/api/join", {
+      const response = await fetch("http://192.168.207.23:3000/api/join", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -7,24 +7,29 @@ const { Server } = require("socket.io");
 
 const User = require("./models/user.model");
 const Lobby = require("./models/lobby.model");
-const userRoutes = require("./routes/userRoutes");
+
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://192.168.131.23:5173", // React app origin
+    origin: "http://192.168.207.23:5173", // React app origin
     methods: ["GET", "POST"],
   },
 });
 
-app.use(cors({
-  origin: "*", // Add your frontend URL here
-  methods: ['GET', 'POST'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "*", // Add your frontend URL here
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 app.use(express.json());
+const userRoutes = require("./routes/userRoutes")(io);
 app.use("/api", userRoutes);
 const path = require("path");
+
+
 
 mongoose
   .connect(
@@ -43,9 +48,17 @@ mongoose
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.on("joinLobby", (lobbyId) => {
-    console.log(`User joined lobby: ${lobbyId}`);
+  socket.on("joinLobby", async (lobbyId) => {
+    // console.log(`User joined lobby: ${lobbyId}`);
     socket.join(lobbyId);
+    const users = await User.find({ lobbyId });
+    const userArray = users.map(user => ({
+      id: user._id,
+      name: user.name,
+      lobbyId: user.lobbyId,
+      score: user.score,
+    }));
+    io.to(lobbyId).emit("joinRoom", userArray);
   });
 
   socket.on("sendMessage", async ({ lobbyId, currentUserId, text }) => {
@@ -68,3 +81,5 @@ io.on("connection", (socket) => {
   });
 });
 // Start the server
+
+

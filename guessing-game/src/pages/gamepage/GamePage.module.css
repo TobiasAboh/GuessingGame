@@ -1,0 +1,26 @@
+
+
+.board {
+  display: grid;
+  grid-template-rows: 1fr 3fr;
+  justify-content: center;
+  margin-inline: auto;
+  max-width: 1000px;
+  overflow: hidden;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+@media (width >= 40em) {
+  .board {
+    display: grid;
+    grid-template-columns: auto 0.7fr;
+    grid-template-rows: none;
+    max-width: 1000px;
+    min-height: 450px
+  }
+}
+

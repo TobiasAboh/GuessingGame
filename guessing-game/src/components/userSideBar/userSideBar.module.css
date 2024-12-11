@@ -1,0 +1,33 @@
+
+.username {
+    font-size: 0.7rem;
+}
+
+.score {
+    font-size: 0.5rem;
+    width: fit-content;
+    margin-inline: 5px;
+}
+@media(width >= 40em){
+
+    .username {
+        font-size: 1rem
+    }
+
+    .score {
+        font-size: 0.8rem;
+    }
+    
+}
+
+@media(width >= 60em){
+
+    .username {
+        font-size: 1.2rem
+    }
+
+    .score {
+        font-size: 1rem;
+    }
+    
+}

@@ -1,6 +1,6 @@
-import socket from "../../socket";
+import socket from "../socket";
 
-import TextInput from "../textInput";
+import TextInput from "./textInput";
 import { useEffect, useState } from "react";
 
 const ChatBox = () => {
@@ -12,7 +12,7 @@ const ChatBox = () => {
   const getUserData = async () => {
     try {
       const response = await fetch(
-        `http://192.168.131.23:3000/api/users/${currentUserId}`,
+        `http://192.168.207.23:3000/api/users/${currentUserId}`,
         {
           method: "GET",
           headers: {
@@ -35,10 +35,6 @@ const ChatBox = () => {
   const handleSendMessage = (newMessage) => {
     try {
       if (newMessage.trim()) {
-        // setMessages([...messages, newMessage]); // Add new message to array
-        // console.log(
-        //   `lobbyId: ${lobbyId}, currentUserId: ${currentUserId}, text: ${newMessage}`
-        // );
         socket.emit("sendMessage", {
           lobbyId,
           currentUserId,
@@ -85,9 +81,9 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "end",
-    maxWidth: "500px",
-    minHeight: "300px",
-    marginInline: "auto",
+    // maxWidth: "900px",
+    height: "100%",
+    // marginInline: "auto",
     backgroundColor: "purple",
   },
 

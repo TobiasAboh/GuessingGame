@@ -1,0 +1,23 @@
+
+.description {
+    font-size: 0.5rem;
+    margin-inline: auto;
+    padding-inline: 15px;
+    height: 100px;
+
+}
+
+@media(width >= 40em){
+
+    .description {
+        font-size: 0.7rem;
+    }
+    
+}
+@media(width >= 60em){
+
+    .description {
+        font-size: 0.7rem;
+    }
+    
+}

@@ -1,0 +1,13 @@
+header {
+  width: fit-content;
+  margin-inline: auto;
+}
+
+.title {
+  font-size: 2rem;
+  font-size: clamp(2rem, 0.8159203980099503rem + 5.306799336650083vw, 4rem);
+  margin: auto;
+  margin-top: 10px;
+  margin-inline: 10px;
+  color: rgb(139, 138, 190);
+}
