@@ -12,7 +12,7 @@ const ChatBox = () => {
   const getUserData = async () => {
     try {
       const response = await fetch(
-        `http://192.168.207.23:3000/api/users/${currentUserId}`,
+        `http://${import.meta.env.VITE_IP_ADDRESS}:3000/api/users/${currentUserId}`,
         {
           method: "GET",
           headers: {

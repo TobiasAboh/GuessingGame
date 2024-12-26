@@ -16,26 +16,32 @@ const HomePage = () => {
   };
 
   const handleButtonClick = async () => {
-
     try {
-      if(username.trim() === ""){
+      if (username.trim() === "") {
         alert("Please enter a username");
         return;
       }
-      const response = await fetch("http://192.168.207.23:3000/api/join", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: username }),
-      });
+      const response = await fetch(
+        `http://${import.meta.env.VITE_IP_ADDRESS}:3000/api/join`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: username }),
+        }
+      );
 
       if (response.ok) {
         console.log("User created successfully");
         const data = await response.json();
+        console.log(`LobbyId is this: ${data.lobbyId}`);
         localStorage.setItem("currentUserId", data.userId);
         localStorage.setItem("lobbyId", data.lobbyId);
-        socket.emit("joinLobby", data.lobbyId);
+        socket.emit("joinLobby", {
+          lobbyId: data.lobbyId,
+          userId: data.userId,
+        });
         setUser(""); // Clear input field
       } else {
         const error = await response.json();

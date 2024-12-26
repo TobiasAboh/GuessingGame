@@ -8,11 +8,10 @@ const { Server } = require("socket.io");
 const User = require("./models/user.model");
 const Lobby = require("./models/lobby.model");
 
-
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://192.168.207.23:5173", // React app origin
+    origin: `http://${process.env.REACT_APP_IP_ADDRESS}:5173`, // React app origin
     methods: ["GET", "POST"],
   },
 });
@@ -29,7 +28,7 @@ const userRoutes = require("./routes/userRoutes")(io);
 app.use("/api", userRoutes);
 const path = require("path");
 
-
+const userSocketMap = new Map();
 
 mongoose
   .connect(
@@ -48,17 +47,40 @@ mongoose
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.on("joinLobby", async (lobbyId) => {
-    // console.log(`User joined lobby: ${lobbyId}`);
+  socket.on("joinLobby", async ({userId, lobbyId}) => {
+    console.log(`User joined lobby: ${lobbyId}`);
     socket.join(lobbyId);
     const users = await User.find({ lobbyId });
-    const userArray = users.map(user => ({
+    userSocketMap.set(socket.id, { userId, lobbyId });
+    const userArray = users.map((user) => ({
       id: user._id,
       name: user.name,
       lobbyId: user.lobbyId,
       score: user.score,
     }));
     io.to(lobbyId).emit("joinRoom", userArray);
+  });
+
+  socket.on("disconnect", async () => {
+    console.log("A user disconnected");
+
+    const userInfo = userSocketMap.get(socket.id);
+    if (userInfo) {
+      console.log("User disconnected");
+      await User.findByIdAndDelete(userInfo.userId);
+      userSocketMap.delete(socket.id);
+      const lobby = await Lobby.findById(userInfo.lobbyId);
+      lobby.users = lobby.users.filter((user) => user.id !== socket.id);
+      await lobby.save();
+      const users = await User.find({ lobbyId: userInfo.lobbyId });
+      const userArray = users.map((user) => ({
+        id: user._id,
+        name: user.name,
+        lobbyId: user.lobbyId,
+        score: user.score,
+      }));
+      io.to(userInfo.lobbyId).emit("joinRoom", userArray);
+    }
   });
 
   socket.on("sendMessage", async ({ lobbyId, currentUserId, text }) => {
@@ -81,5 +103,3 @@ io.on("connection", (socket) => {
   });
 });
 // Start the server
-
-
